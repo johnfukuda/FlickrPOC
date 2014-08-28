@@ -17,6 +17,10 @@ import com.flickr4java.flickr.auth.Auth;
 import com.flickr4java.flickr.auth.AuthInterface;
 import com.flickr4java.flickr.auth.Permission;
 import com.flickr4java.flickr.collections.Collection;
+import com.flickr4java.flickr.photos.Photo;
+import com.flickr4java.flickr.photos.PhotoList;
+import com.flickr4java.flickr.photos.PhotosInterface;
+import com.flickr4java.flickr.photos.SearchParameters;
 import com.flickr4java.flickr.test.*;
 import com.flickr4java.flickr.util.IOUtilities;
 import com.flickr4java.flickr.RequestContext;
@@ -30,17 +34,13 @@ public class App
 {
     public static void main( String[] args ) throws FlickrException
     {
-        System.out.println( "Initializing main" );
+    	
         Properties properties = null;
-//		FileInputStream in;
         InputStream in = null;
-//		try {
-//			in = new FileInputStream("setup.properties");
 			
 			try {
 	            in = App.class.getClassLoader().getResourceAsStream("setup.properties");
 	// getClass() only works in an object context
-//	        	in = FileInputStream("/setup.properties");
 	            properties = new Properties();
 	            properties.load(in);
 	        } catch (IOException e) {
@@ -49,10 +49,6 @@ public class App
 			} finally {
 	            IOUtilities.close(in);
 	        }
-//		} catch (FileNotFoundException e1) {
-//			// TODO Auto-generated catch block
-//			e1.printStackTrace();
-//		}
         
         
         String apiKey = properties.getProperty("apiKey");
@@ -60,20 +56,42 @@ public class App
         
 		REST rest = new REST();
         Flickr f = new Flickr(apiKey, sharedSecret, rest);
+        
         System.out.println("API Key is:  " + apiKey + ", Shared secret is:  " + sharedSecret);
 //        RequestContext requestContext = RequestContext.getRequestContext();
+        
+        
+//        TestInterface testInterface = f.getTestInterface();
+//        java.util.HashMap<String, String> parms = new java.util.HashMap<String, String>();
+//        parms.put("oauth_callback", "oob");
+//        parms.put("oauth_signature", "HMZTkxRfAu8wc9JIMGdfjKdmQ7k=");
+//        parms.put("oauth_version", "1.0");
+//        parms.put("oauth_nonce", "1187931097");
+//        parms.put("oauth_signature_method", "HMAC-SHA1");
+//        parms.put("oauth_consumer_key", "4e6c1861b256cf47fc435d71dc79edac");
+//        parms.put("oauth_timestamp", "1405111445");
+//        testInterface.echo(parms);
+//        testInterface.login();
+        
+        
+//        SearchParameters params = new SearchParameters();
+//        params.setText("test");
+//        PhotosInterface photosInterface = f.getPhotosInterface();
+//        PhotoList<Photo> photoList = photosInterface.search(params, 10, 1);
+        
+        
         AuthInterface authInterface = f.getAuthInterface();
         Token token = authInterface.getRequestToken();
-//        auth.setPermission(Permission÷roperty("token"));
+//        auth.setPermission(PermissionProperty("token"));
 //        requestContext.setAuth(auth);
         System.out.println("token: " + token);
-
+//
         String url = authInterface.getAuthorizationUrl(token, Permission.READ);
         System.out.println("Follow this URL to authorise yourself on Flickr");
         System.out.println(url);
         System.out.println("Paste in the token it gives you:");
         System.out.print(">>");
-
+//
         Scanner scanner = new Scanner(System.in);
         String tokenKey = scanner.nextLine();
         scanner.close();
@@ -93,5 +111,10 @@ public class App
         
         Flickr.debugRequest = false;
         Flickr.debugStream = false;
+        
+        public void getPhotoList(Flickr f) {
+        	PhotosInterface p = f.getPhotoInterface()
+        }
+        }
     }
 }
