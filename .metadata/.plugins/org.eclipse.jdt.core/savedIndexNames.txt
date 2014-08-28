@@ -1,0 +1,13 @@
+INDEX VERSION 1.126+/Users/ufukujo/Workspaces/Eclipse/proof-of-concept/.metadata/.plugins/org.eclipse.jdt.core
+3000285004.index
+1042249792.index
+4249315662.index
+795089264.index
+450555687.index
+3954040986.index
+84777399.index
+272178059.index
+3004609673.index
+770573466.index
+2326659272.index
+765977872.index
