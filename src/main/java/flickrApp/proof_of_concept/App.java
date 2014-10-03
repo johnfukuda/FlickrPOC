@@ -36,25 +36,30 @@ public class App
     public static void main( String[] args ) throws FlickrException
     {
     	
-        Properties properties = null;
-        InputStream in = null;
-			
-			try {
-	            in = App.class.getClassLoader().getResourceAsStream("setup.properties");
-	// getClass() only works in an object context
-	            properties = new Properties();
-	            properties.load(in);
-	        } catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-	            IOUtilities.close(in);
-	        }
+//        final Properties properties = null;
+//        InputStream in = null;
+//			
+//			try {
+//	            in = App.class.getClassLoader().getResourceAsStream("setup.properties");
+//	// getClass() only works in an object context
+//	            properties = new Properties();
+//	            properties.load(in);
+//	        } catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} finally {
+//	            IOUtilities.close(in);
+//	        }
+//        
         
-        
-        String apiKey = properties.getProperty("apiKey");
-		 String sharedSecret = properties.getProperty("secret");
-        
+//        String apiKey = properties.getProperty("apiKey");
+//		 String sharedSecret = properties.getProperty("secret");
+//        
+    	PropertyHandler ph = PropertyHandler.getInstance();
+
+    	String apiKey = ph.getValue("apiKey");
+		String sharedSecret = ph.getValue("secret");
+    
 		REST rest = new REST();
         Flickr f = new Flickr(apiKey, sharedSecret, rest);
         
@@ -114,19 +119,26 @@ public class App
         Flickr.debugStream = false;
         
         PhotoList<Photo> pl = getPhotoList(f);
-        int len = pl.size();
         String s;
         ImageReader ir = new ImageReader();
-        System.out.println("PhotoList size is " + len);
-        for (int _x=0; _x < len; _x++)
+        
+        System.out.println("PhotoList size is " + pl.size());
+//        for (int _x=0; _x < len; _x++)
+        for (Photo pho : pl)
         {
-        	s = pl.get(_x).getOriginalUrl();
-//        	s = pl.get(_x).getUrl();
+        	s = pho.getOriginalUrl();
+//        	s = pho.get(_x).getUrl();
         	if (s != null)
         	{
         		System.out.println("Photo URL is " + s);
+        		String fileName = pho.getFarm() +
+        				"_" + pho.getServer() + 
+        				"_" + pho.getId() + 
+        				"_" + pho.getOriginalSecret() +
+        				"_o "+ "." + pho.getOriginalFormat();
+        				
         		try {
-        			ir.downloadImage(s);
+        			ir.downloadImage(s, fileName);
         		}
         		catch (IOException _iox) {
         			System.out.println("Error downloading image " + _iox.toString());
@@ -142,7 +154,7 @@ public class App
         	PhotoList<Photo> _pl = new PhotoList<Photo>();
         	SearchParameters params = new SearchParameters();
         	params.setUserId("53018054@N00"); // hardcoded to my own ID for test purposes
-        	params.setExtras(new java.util.HashSet<String>(Arrays.asList("url_o"))); // original photo url
+        	params.setExtras(new java.util.HashSet<String>(Arrays.asList("url_o","original_format"))); // original photo url
         	try {
         		_pl = p.search(params, 0, 0);
 //        		_pl = p.getRecent(null, 0, 0);

@@ -15,8 +15,9 @@ import com.flickr4java.flickr.util.IOUtilities;
 
 public class ImageReader {
 
+	private PropertyHandler ph;
 	public ImageReader() {
-		
+		ph = PropertyHandler.getInstance();
 	}
 
 	public BufferedImage readImage(String UrlString) throws IOException {
@@ -26,14 +27,11 @@ public class ImageReader {
         InputStream in = null;
         try {
             in = conn.getInputStream();
-            BufferedImage _tmp = ImageIO.read(in);
-            
-//            BufferedReader inReader = new BufferedReader(new InputStreamReader(in));
-//            String _sb = inReader.readLine();
-            
-//            return null;
-            return _tmp;
-//            return ImageIO.read(in);
+//            BufferedImage _tmp = ImageIO.read(in);
+//            
+//
+//            return _tmp;
+            return ImageIO.read(in);
         } 
         catch (Exception _x) {
         	System.out.println("Error getting image " + _x.toString());
@@ -44,16 +42,12 @@ public class ImageReader {
         }
 	  }
 	
-	public void downloadImage(String UrlString) throws IOException {
+	public void downloadImage(String UrlString, String fileName) throws IOException {
 		BufferedImage img = readImage(UrlString);
 		if (img != null) {
-			try {
-			File f = new File("/Users/ufukujo/Desktop/test.jpg");
+			String path = ph.getValue("downloadPath").trim();
+			File f = new File(path + fileName);
 			ImageIO.write(img,  "jpg", f );
-		}
-			catch (Exception _e) {
-				System.out.println("Error writing image file " + _e.toString());
-			}
 		}
 	}
 	
