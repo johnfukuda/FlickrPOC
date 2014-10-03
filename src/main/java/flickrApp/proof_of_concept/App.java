@@ -3,6 +3,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
@@ -96,25 +97,61 @@ public class App
         String tokenKey = scanner.nextLine();
         scanner.close();
 
-        Token requestToken = authInterface.getAccessToken(token, new Verifier(tokenKey));
+        Token accessToken = authInterface.getAccessToken(token, new Verifier(tokenKey));
         System.out.println("Authentication success");
 
-        Auth auth = authInterface.checkToken(requestToken);
+        Auth auth = authInterface.checkToken(accessToken);
 
         // This token can be used until the user revokes it.
-        System.out.println("Token: " + requestToken.getToken());
+        System.out.println("Token: " + accessToken.getToken());
         System.out.println("nsid: " + auth.getUser().getId());
         System.out.println("Realname: " + auth.getUser().getRealName());
         System.out.println("Username: " + auth.getUser().getUsername());
         System.out.println("Permission: " + auth.getPermission().getType());
 
         
-        Flickr.debugRequest = false;
+        Flickr.debugRequest = true;
         Flickr.debugStream = false;
         
-        public void getPhotoList(Flickr f) {
-        	PhotosInterface p = f.getPhotoInterface()
+        PhotoList<Photo> pl = getPhotoList(f);
+        int len = pl.size();
+        String s;
+        ImageReader ir = new ImageReader();
+        System.out.println("PhotoList size is " + len);
+        for (int _x=0; _x < len; _x++)
+        {
+        	s = pl.get(_x).getOriginalUrl();
+//        	s = pl.get(_x).getUrl();
+        	if (s != null)
+        	{
+        		System.out.println("Photo URL is " + s);
+        		try {
+        			ir.downloadImage(s);
+        		}
+        		catch (IOException _iox) {
+        			System.out.println("Error downloading image " + _iox.toString());
+        		}
+        	}
         }
-        }
+        
     }
+    
+        public static PhotoList<Photo> getPhotoList(Flickr f) 
+        {
+        	PhotosInterface p = f.getPhotosInterface();
+        	PhotoList<Photo> _pl = new PhotoList<Photo>();
+        	SearchParameters params = new SearchParameters();
+        	params.setUserId("53018054@N00"); // hardcoded to my own ID for test purposes
+        	params.setExtras(new java.util.HashSet<String>(Arrays.asList("url_o"))); // original photo url
+        	try {
+        		_pl = p.search(params, 0, 0);
+//        		_pl = p.getRecent(null, 0, 0);
+        	}
+        	catch (Exception _e) {
+        		System.out.println("Exception thrown in getPhotoList():  " + _e.toString());
+        	}
+        	return _pl;
+        }
+        
+      
 }
